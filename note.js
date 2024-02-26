@@ -1,11 +1,12 @@
 
 export class Note {
-    constructor(id, text, author, date) {
+    constructor(id, text, category, date) {
         this.id = id;
         this.text = text;
-        this.author = author;
-        this.date = date;
+        this.category = category;
+        this.date = new Date().toLocaleDateString();
     }
+
 
     fullDisplay() {
         // const formattedDate = this.date.toLocaleDateString();
@@ -14,6 +15,7 @@ export class Note {
         Date: ${this.date}`;
         return display;
     }
+
 }
 
 // const n1 = new Note('Acheter du lait', 'Chris');

@@ -52,15 +52,28 @@
         color: red;
         display: none;
       }
-
+      li {
+        padding-bottom: 5px;
+        padding-top: 5px;
+        border-bottom: solid white 1px;
+      }
       li.border {
-        background-color: rgb(223, 210, 194);
+        background-color: rgb(227, 135, 22);
       }
     </style>
 
     <div class="wrapper">
       <h1>Bloc notes</h1>
       <form>
+        <select name="categories" id="categories">
+          <option value="">--Please choose a category--</option>
+          <option value="Médical">Médical</option>
+          <option value="Famille">Famille</option>
+          <option value="Ménage">Ménage</option>
+          <option value="Travaux">Travaux</option>
+          <option value="Jardin">Jardin</option>
+        </select>
+
         <div class="form-floating">
           <input
             type="text"
@@ -69,12 +82,26 @@
             placeholder="Write your note"
             style="height: 60px"
           />
+
+
           <div id="error-msg">
             <span>{{minChar}}</span> caractères minimum sont requis
           </div>
         </div>
       </form>
       <div>Nombre de notes : <span id="count">0</span></div>
+      
+      <label>Trier par catégorie</label>
+
+        <select name="categories" id="categoryFilter">
+          <option value="">Voir toutes les notes</option>
+          <option value="Médical">Médical</option>
+          <option value="Famille">Famille</option>
+          <option value="Ménage">Ménage</option>
+          <option value="Travaux">Travaux</option>
+          <option value="Jardin">Jardin</option>
+        </select>
+
       <ul id="list" class="list-group"></ul>
 
       <script type="module" src="index.js"></script>

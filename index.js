@@ -1,7 +1,6 @@
-import { Note } from './note.js';
-import { NoteManager } from './note-manager.js';
-import { NoteElement } from './note-element.js';
-
+import { Note } from "./note.js";
+import { NoteManager } from "./note-manager.js";
+import { NoteElement } from "./note-element.js";
 
 // le modèle
 let notes = [];
@@ -9,6 +8,8 @@ const minChars = 6;
 
 const inputElem = document.getElementById("my-input");
 const listElem = document.getElementById("list");
+const categoryElem = document.getElementById("categories");
+const categoryFilter = document.getElementById("categoryFilter");
 const errorMsg = document.getElementById("error-msg");
 const form = document.getElementsByTagName("form")[0];
 
@@ -32,7 +33,6 @@ function addNoteToView() {
   let newItem = document.createElement("li");
   newItem.className = "border";
   const addedNote = notes[notes.length - 1];
-  newItem.innerText = addedNote.fullDisplay();
 
   // ajouter dans l'arbre / DOM
   // on l'ajoute comme enfant de la liste
@@ -80,55 +80,87 @@ form.addEventListener("submit", async function (event) {
   event.preventDefault();
   if (isValid()) {
     //instanciation d'une nouvelle note
-    const newNote = new Note(null, inputElem.value);
+    const newNote = new Note(
+      null,
+      inputElem.value,
+      categoryElem.value,
+      new Date()
+    );
     await NoteManager.create(newNote);
     await refreshNoteList();
     // addNotes();
-    // updateCounter();
+    updateCounter();
     resetInput();
   }
 });
 
-listElem.addEventListener('click', event => {
-  console.log('event target : ', event.target.getAttribute("data-id"));
+listElem.addEventListener("click", (event) => {
+  console.log("event target : ", event.target.getAttribute("data-id"));
   // on convertit en nombre la valeur de l'attribut  data-id de l'élément cliqué
-  const id = +event.target.getAttribute('data-id');
+  const id = +event.target.getAttribute("data-id");
   //si j'ai bien cliqué sur un élément qui est bien associé à un id de note
   if (!isNaN(id)) {
     NoteManager.remove(id);
   }
-})
-
+});
 
 document.querySelector("#error-msg span").innerText = minChars;
 
 async function refreshNoteList() {
   notes = await NoteManager.list();
-  
-  // let noteElements = notes.forEach(note => listElem.appendChild(NoteElement.create(note))); 
+  // let noteElements = notes.forEach(note => listElem.appendChild(NoteElement.create(note)));
   // aussi ecrit comme suit :
-  let noteElements = notes.map(note => NoteElement.create(note));
-  listElem.innerHTML ='';
+  if (categoryFilter.value == '') {
+    let noteElements = notes.map(note => NoteElement.create(note));
+    listElem.innerHTML = "";
+    noteElements.forEach(item => listElem.appendChild(item));
+    document.getElementById("count").innerText = notes.length;
+  } 
+  else {
+    let filteredElements = notes.filter(note => note.category == categoryFilter.value);
+    let mappedFilteredElements = filteredElements.map(note =>
+      NoteElement.create(note)
+      );
+      listElem.innerHTML = "";
+      mappedFilteredElements.forEach(item => listElem.appendChild(item));
+    }
+    // listElem.innerHTML = "";
+    // noteElements.forEach((item) => listElem.appendChild(item));
+  };
   
-  noteElements.forEach(item => listElem.appendChild(item));
+  refreshNoteList();
+  categoryFilter.addEventListener("change", async function (event) {
+    refreshNoteList();
+    // document.getElementById("count").innerText = .length;
+});
 
-}
+//original :
+// async function refreshNoteList() {
+//   notes = await NoteManager.list();
+//   // let noteElements = notes.forEach(note => listElem.appendChild(NoteElement.create(note)));
+//   // aussi ecrit comme suit :
+//   let noteElements = notes.map((note) => NoteElement.create(note));
+//   listElem.innerHTML = "";
 
-refreshNoteList();
+//   noteElements.forEach((item) => listElem.appendChild(item));
 
-// new Note;
+//   document.getElementById("count").innerText = notes.length;
+// }
+console.log(categoryFilter.value);
 
 
-// document
-//   .querySelector("#load-data-btn")
-//   .addEventListener("click", (event) => {
-//     fetch("http://localhost:5500/notes/")
-//       .then((reponse) => {
-//         return reponse.json();
-//       })
-//       .then((json) => {
-//         console.log("data for tasks : ", json);
-//         tasksList = json.map((item) => new Task(item.text));
-//         tasksList.forEach((task) => addTaskToView(task));
-//       });
+// async function refreshNoteList() {
+//   notes = await NoteManager.list();
+//   // let noteElements = notes.forEach(note => listElem.appendChild(NoteElement.create(note)));
+//   // aussi ecrit comme suit :
+//   let noteElements = notes.map((note) => NoteElement.create(note));
+//   listElem.innerHTML = "";
+
+//   categoryFilter.addEventListener("change", async function(event) {
+//     filteredResults = notes.filter(([Note.category]) === categoryFilter.value)
+//     notes = await NoteManager.list();
+//     // categoryFilter.addEventListener("change", console.log(categoryFilter.value));
 //   });
+
+//   document.getElementById("count").innerText = notes.length;
+// }

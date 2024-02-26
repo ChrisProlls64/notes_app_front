@@ -4,7 +4,7 @@ export class NoteManager {
     static async list() {
         const response = await fetch("http://localhost:3000/notes/");
         const data = await response.json();
-        return data.map(obj => new Note(obj.id, obj.text));
+        return data.map(obj => new Note(obj.id, obj.text, obj.category, obj.date));
     }
 
     static async create(note)  {
